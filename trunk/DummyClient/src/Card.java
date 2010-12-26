@@ -1,4 +1,5 @@
 public class Card {
+	
 	int cardNumber;
 	boolean showCard;
 	Card(){
