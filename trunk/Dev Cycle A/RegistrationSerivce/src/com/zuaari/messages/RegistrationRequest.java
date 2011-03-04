@@ -12,7 +12,7 @@ public class RegistrationRequest implements IMessage {
 
 	@Override
 	public void setMessage(String msg) {
-		// TODO Auto-generated method stub
+		/// TODO Auto-generated method stub
 
 	}
 
