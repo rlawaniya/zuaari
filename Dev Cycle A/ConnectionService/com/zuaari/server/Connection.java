@@ -51,7 +51,7 @@ public class Connection implements Runnable {
 						.readObject();
 				logger.info(" Connection Handler first message "
 						+ firstMessage.toString());
-				oos.writeObject(new HandShakeResponse(
+				sendMessage(new HandShakeResponse(
 						ServiceConstants.HANDSHAKE_RES_SUCCESS));
 				sessionService.addVisitor("xxxx"+firstMessage.getMessage(),
 						createVisitorFromHandShakeReq(firstMessage));
