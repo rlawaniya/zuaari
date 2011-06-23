@@ -35,9 +35,8 @@ public class Connection {
 			socket = new Socket(serverIP, port);
 			run();
 		} catch (UnknownHostException e) {
-			logger
-					.info("client.Connection Unknown host: Server does not exist/accepting connection on IP"
-							+ serverIP + " port=" + port);
+			logger.info("client.Connection Unknown host: Server does not exist/accepting connection on IP"
+					+ serverIP + " port=" + port);
 			System.exit(1);
 		} catch (IOException e) {
 			logger.info("client Connection : No I/O");
@@ -53,34 +52,12 @@ public class Connection {
 	 */
 
 	public void run() {
-		IMessage serverMessage;
-		IMessageHandler msgHandler = MessageHandler.getMessageHandler();
 		try {
 			oos = new ObjectOutputStream(socket.getOutputStream());
 			ois = new ObjectInputStream(socket.getInputStream());
 			sendFirstMessage(true);
-			while (true) {
-				try {
-					// List serverMessage = (List) ois.readObject();
-					serverMessage = (IMessage) ois.readObject();
-					logger
-							.info("printing server message ---->"
-									+ serverMessage);
-
-					msgHandler.performAction(serverMessage, this);
-				} catch (ClassNotFoundException cce) {
-					logger
-							.info("ClassNotFoundException when converting byte to object message");
-					cce.printStackTrace();
-
-				} catch (Exception ex) {
-					oos.close();
-					ois.close();
-					close();
-					ex.printStackTrace();
-					break;
-				}
-			}
+			Thread thread = new Thread(new MessageListener(this));
+			thread.start();
 		} catch (IOException ioe) {
 			logger.info("Exception when reading/writing socket stream");
 			ioe.printStackTrace();
@@ -92,7 +69,6 @@ public class Connection {
 			}
 			close();
 		}
-
 	}
 
 	private void sendFirstMessage(boolean retryOn) {
@@ -137,6 +113,34 @@ public class Connection {
 				socket.close();
 		} catch (Exception ex) {
 			// shouldnt happen
+		}
+	}
+
+	class MessageListener implements Runnable {
+		Connection connection;
+
+		public MessageListener(Connection conn) {
+			this.connection = conn;
+		}
+		public void run() {
+			IMessage serverMessage;
+			IMessageHandler msgHandler = MessageHandler.getMessageHandler();
+			while (true) {
+				try {
+					// List serverMessage = (List) ois.readObject();
+					serverMessage = (IMessage) ois.readObject();
+					logger.info("printing server message ---->" + serverMessage);
+
+					msgHandler.performAction(serverMessage, connection);
+				} catch (ClassNotFoundException cce) {
+					logger.info("ClassNotFoundException when converting byte to object message");
+					cce.printStackTrace();
+				} catch (Exception ex) {
+					close();
+					ex.printStackTrace();
+					break;
+				}
+			}
 		}
 	}
 

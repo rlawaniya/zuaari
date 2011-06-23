@@ -1,5 +1,8 @@
 package com.zuaari.client;
+
+import com.zuaari.login.LoginService;
 import com.zuaari.messages.IMessage;
+import com.zuaari.messages.LoginRequest;
 
 public class MessageHandler implements IMessageHandler {
 
@@ -22,9 +25,17 @@ public class MessageHandler implements IMessageHandler {
 	 *        on runtime.
 	 */
 	public void performAction(IMessage msg, Connection connection) {
-		IMessage response = msg.performAction();
+		IMessage response = msgAction(msg);
 		if (response != null) {
 			connection.sendMessage(response);
 		}
+	}
+
+	public IMessage msgAction(IMessage msg) {
+		if (msg instanceof LoginRequest) {
+			return LoginService.getLoginService().doLogin((LoginRequest) msg);
+
+		} else
+			return null;
 	}
 }
