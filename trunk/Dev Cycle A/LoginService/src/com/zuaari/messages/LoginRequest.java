@@ -1,12 +1,38 @@
 package com.zuaari.messages;
 
-import com.zuaari.login.LoginService;
+public class LoginRequest extends Message {
 
-public class LoginRequest implements IMessage {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8625052008882548529L;
+	private String user;
+	private String password;
 
-	@Override
+	public LoginRequest() {
+	}
+	public LoginRequest(String user,String password) {
+		this.user=user;
+		this.password=password;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getMessage() {
-		// TODO Auto-generated method stub
 		return "LoginRequest";
 	}
 
@@ -16,10 +42,5 @@ public class LoginRequest implements IMessage {
 
 	}
 
-	public IMessage performAction() {
-
-		return LoginService.getLoginService().doLogin(this);
-
-	}
 
 }
